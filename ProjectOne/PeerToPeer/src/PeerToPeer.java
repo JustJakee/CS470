@@ -9,14 +9,9 @@ public class PeerToPeer
   public static void main(String[] args) throws Exception 
   {
 	//Client List - IP information included 
-	ipList.add("localhost"); 
-	ipList.add("0");
-	ipList.add("localhost");
-	ipList.add("localhost"); 
-	ipList.add("localhost"); 
-	ipList.add("0"); 
-	ipList.add("localhost");
-	ipList.add("localhost");
+	ipList.add("150.243.219.96"); 
+	//ipList.add("localhost");
+	ipList.add("150.243.223.255");
 	
     startReciever(); //Begin server thread
     startSender(); //Begin client thread
@@ -31,7 +26,7 @@ public class PeerToPeer
         public void run() 
         {
         	
-        	byte data[] = "Client x is up.".getBytes();
+        	byte data[] = "150.243.196.220".getBytes();
             DatagramSocket clientSocket = null;
             
             try 
@@ -53,31 +48,45 @@ public class PeerToPeer
 					{
 						ipAddress = InetAddress.getByName(ipList.get(i));
 						
+						/*
 						if (ipAddress.isReachable(5000)) //5 second timeout 
 						{
-							String upString = "Client " + (i + 1) + " is up.";
+							String upString = "Client " + (i) + " is up.";
 				            byte dataUp[] = upString.getBytes();
-							DatagramPacket sendPacket = new DatagramPacket(dataUp,data.length,ipAddress,123);
+							DatagramPacket sendPacket = new DatagramPacket(dataUp,data.length,ipAddress,9877);
 			                clientSocket.send(sendPacket);
+			                System.out.println("good");
 						}
 						else
 						{
+							System.out.println("bad");
 							//timeout will occur
+							String downString = "Client " + (i) + " is down.";
+				            byte dataBad[] = downString.getBytes();
+							DatagramPacket sendPacket = new DatagramPacket(dataBad,data.length,ipAddress,9877);
+			                clientSocket.send(sendPacket);
 						}
-		                
+		                */
+						
+						
+						String hostIP = "150.243.196.220";
+						byte dataUp[] = hostIP.getBytes();
+						DatagramPacket sendPacket = new DatagramPacket(dataUp,data.length,ipAddress,9877); 
+						
+						
 		                Thread.sleep(5000);//give time for receiver to boot 
 					} 
 					catch (UnknownHostException e) //unable to find IP
 					{
-						System.out.println("Client " + (i + 1) + " is down.");
+						System.out.println("Unknown Host");
 					}
 					catch (IOException ex) 
 	                {
-						System.out.println("Client " + (i + 1) + " is down.");
+						System.out.println("IOException.");
 	                }
 					catch (InterruptedException e)
 					{
-						System.out.println("Client " + (i + 1) + " is down.");
+						System.out.println("InterruptedException");
 					}
 	        	}
 	        	System.out.println("Client list exhausted.\n");
@@ -95,15 +104,19 @@ public class PeerToPeer
         public void run() 
         {
                 DatagramSocket serverSocket = null;
+                //InetAddress ipAddress = null;
+        
                 
                 try 
                 {
-                	serverSocket = new DatagramSocket(123);
+                	serverSocket = new DatagramSocket(9877);
+                
                 } 
                 catch (SocketException ex) 
                 {
                     ex.printStackTrace();
                 }
+              
                 
                 DatagramPacket receivePacket = new DatagramPacket(new byte[1024], 1024);
                 
@@ -111,10 +124,11 @@ public class PeerToPeer
                 {
                 	try 
                 	{
-                		serverSocket.receive(receivePacket);
-	                    String msg = new String(receivePacket.getData());
-	                    
-	                    System.out.println(msg);
+                			serverSocket.receive(receivePacket);
+    	                    String msg = new String(receivePacket.getData());
+    	                    
+    	                    System.out.println(msg);
+                		
                 	} 
                 	catch (IOException ex) 
                 	{
