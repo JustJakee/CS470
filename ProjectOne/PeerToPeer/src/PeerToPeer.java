@@ -9,8 +9,8 @@ public class PeerToPeer
   public static void main(String[] args) throws Exception 
   {
 	//Client List - IP information included 
-	ipList.add("150.243.219.96"); 
-	//ipList.add("localhost");
+	ipList.add("150.243.196.220"); 
+
 	ipList.add("150.243.223.255");
 	
     startReciever(); //Begin server thread
@@ -41,7 +41,7 @@ public class PeerToPeer
             
             while (true)
             {
-	        	for (int i = 0; i < ipList.size(); i++) 
+	        	for (int i = 0; i < ipList.size() - 1; i++) 
 	        	{
 	        		InetAddress ipAddress;
 					try 
@@ -69,10 +69,10 @@ public class PeerToPeer
 		                */
 						
 						
-						String hostIP = "150.243.196.220";
+						String hostIP =  "150.243.219.096";
 						byte dataUp[] = hostIP.getBytes();
-						DatagramPacket sendPacket = new DatagramPacket(dataUp,data.length,ipAddress,9877); 
-						
+						DatagramPacket sendPacket = new DatagramPacket(dataUp,data.length,ipAddress,9879); 
+						clientSocket.send(sendPacket);
 						
 		                Thread.sleep(5000);//give time for receiver to boot 
 					} 
@@ -105,11 +105,11 @@ public class PeerToPeer
         {
                 DatagramSocket serverSocket = null;
                 //InetAddress ipAddress = null;
-        
+                //int port = 0;
                 
                 try 
                 {
-                	serverSocket = new DatagramSocket(9877);
+                	serverSocket = new DatagramSocket(9879);
                 
                 } 
                 catch (SocketException ex) 
