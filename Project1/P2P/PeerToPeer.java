@@ -1,72 +1,23 @@
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
-import java.io.*;
 
 public class PeerToPeer 
 {
-  //public static ArrayList<String> ipList = new ArrayList<>(); //output
-  public static ArrayList<String> ipList = new ArrayList<String>();
-
+	//"150.243.223.255"
+	//public static String[] ipList = {"150.243.196.220","150.243.219.96", "150.243.17.27","150.16.197"};
+	
+	//Jake Koons 150.243.208.129
+	//Jake Bertish 150.243.194.71
+	//Garry 150.243.xxx.xxx
+	public static String[] ipList = {"150.243.208.129"};
+	
   public static void main(String[] args) throws Exception 
   {
-	//Client List - IP information included 
+	
     startReciever(); //Begin server thread
     startSender(); //Begin client thread
-    readConfigFile();
-    writeConfigFile(ipList);
-    
   }
-
-
-    public static void readConfigFile() 
-    {
-    try
-    {
-        FileReader fileReader = new FileReader("config.txt");
-        String i = null;    
-
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-            while((i = bufferedReader.readLine()) != null)
-
-            {
-                ipList.add(i);
-            }   
-
-            bufferedReader.close();         
-        }
-        catch(FileNotFoundException ex) 
-        {
-            System.out.println("Unable to open file");                
-        }
-        catch(IOException ex) 
-        {
-            System.out.println("Error reading file");                  
-        }
-    }
-    public static void writeConfigFile(ArrayList ipList) 
-    {
-        try 
-        {
-            FileWriter fileWriter = new FileWriter("config.txt");
-
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
-            for( int i = 0; i < ipList.size(); i++)
-            {
-                bufferedWriter.write(ipList.get(i).toString());
-                bufferedWriter.newLine();
-            }
-
-            bufferedWriter.close();
-        }
-        catch(IOException ex) {
-            System.out.println("Error writing to file ");
-        }
-
-    }
-  
 
   public static void startSender() throws UnknownHostException
   {
@@ -84,6 +35,7 @@ public class PeerToPeer
             {
                 clientSocket = new DatagramSocket();
                 clientSocket.setBroadcast(true);
+                
             } 
             catch (SocketException ex) 
             {
@@ -92,18 +44,36 @@ public class PeerToPeer
             
             while (true)
             {
-	        	for (int i = 0; i < ipList.size() - 1; i++) 
+	        	for (int i = 0; i < ipList.length; i++) 
 	        	{
 	        		InetAddress ipAddress;
 					try 
 					{
-						ipAddress = InetAddress.getByName(ipList.get(i));
+						ipAddress = InetAddress.getByName(ipList[i]);
 						
 						
-						String hostIP =  "150.243.223.255";
-						byte dataUp[] = hostIP.getBytes();
-						DatagramPacket sendPacket = new DatagramPacket(dataUp,data.length,ipAddress,9880); 
-						clientSocket.send(sendPacket);
+						
+						if (ipAddress.isReachable(5000)) //5 second timeout 
+						{
+							
+							
+							
+							
+							//System.out.println("good");
+							//String upString = "Client " + (i) + " is up.";
+				            //byte dataUp[] = upString.getBytes();
+							//DatagramPacket sendPacket = new DatagramPacket(dataUp,data.length,ipAddress,9878);
+			                //clientSocket.send(sendPacket);
+			                
+						}
+						else //timeout occurred
+						{
+							System.out.println("bad");
+							String downString = "Client " + (i) + " is down.";
+				            byte dataBad[] = downString.getBytes();
+							DatagramPacket sendPacket = new DatagramPacket(dataBad,data.length,ipAddress,9878);
+			                clientSocket.send(sendPacket);
+						}
 						
 		                Thread.sleep(5000);//give time for receiver to boot 
 					} 
@@ -120,7 +90,7 @@ public class PeerToPeer
 						System.out.println("InterruptedException");
 					}
 	        	}
-	        	//System.out.println("Client list exhausted.\n");
+	        	System.out.println("none left.\n");
             }
         }
        }).start();
@@ -135,10 +105,12 @@ public class PeerToPeer
         public void run() 
         {
                 DatagramSocket serverSocket = null;
+                //InetAddress ipAddress = null;
+        
                 
                 try 
                 {
-                	serverSocket = new DatagramSocket(9880);
+                	serverSocket = new DatagramSocket(9878);
                 
                 } 
                 catch (SocketException ex) 
@@ -153,13 +125,11 @@ public class PeerToPeer
                 {
                 	try 
                 	{
-                		System.out.println("Before receive");
-                		serverSocket.receive(receivePacket);
-                		System.out.println("After receive");
-    	                String msg = new String(receivePacket.getData());
-                        ipList.add(msg);
-
-    	                System.out.println(msg);
+                		
+                			serverSocket.receive(receivePacket);
+    	                    String msg = new String(receivePacket.getData());
+    	                    
+    	                    System.out.println(msg);
                 		
                 	} 
                 	catch (IOException ex) 

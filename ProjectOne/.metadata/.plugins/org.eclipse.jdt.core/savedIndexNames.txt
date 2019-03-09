@@ -1,20 +1,4 @@
-INDEX VERSION 1.131+/Users/JBert28/Desktop/2019/School/CS/470/Project1/.metadata/.plugins/org.eclipse.jdt.core
-1302770079.index
-1271342938.index
-3484117950.index
-3927758025.index
-2255771374.index
-344405441.index
-1499520195.index
-3158197321.index
-680827947.index
-1888666045.index
-2132672051.index
-1416793072.index
-1999298954.index
-3334288320.index
-3720681883.index
-2084021475.index
+INDEX VERSION 1.131+/Users/JBert28/Desktop/GitHub/CS470/ProjectOne/.metadata/.plugins/org.eclipse.jdt.core
 2635252837.index
-2762063732.index
-124275899.index
+344405441.index
+2704003682.index
