@@ -12,10 +12,7 @@ public class PeerToPeer
 	public static void main(String[] args) throws Exception 
 	{
 		startReciever(); //Begin server thread
-		if(!ipList.isEmpty())
-		{
-			startSender(); //Begin client thread
-		}
+		startSender(); //Begin client thread
 	}
 
 
@@ -138,7 +135,7 @@ public class PeerToPeer
 			@Override
 			public void run() 
 			{	
-				
+				readConfigFile();
 				DatagramSocket serverSocket = null;
 
 				try 
@@ -159,7 +156,6 @@ public class PeerToPeer
 					{
 						serverSocket.receive(receivePacket);
 						String msg = new String(receivePacket.getData(), receivePacket.getOffset() , receivePacket.getLength());
-						
 						
 						
 						if(!ipList.contains(msg) && !msg.equals("127.0.1.1"))
