@@ -12,9 +12,9 @@ public class PeerToPeer
 	public static void main(String[] args) throws Exception 
 	{
 		//Client List - IP information included 
-		String hostIP = Inet4Address.getLocalHost().getHostAddress();
-		System.out.println(hostIP);
-		ipList.add("192.168.001.014");
+		//String hostIP = Inet4Address.getLocalHost().getHostAddress();
+		//System.out.println(hostIP);
+		//ipList.add("192.168.001.014");
 		startReciever(); //Begin server thread
 		startSender(); //Begin client thread
 		//readConfigFile();
@@ -33,9 +33,9 @@ public class PeerToPeer
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 
 			while((i = bufferedReader.readLine()) != null)
-
 			{
 				ipList.add(i);
+				System.out.println("yeeeee");
 			}   
 
 			bufferedReader.close();         
@@ -80,10 +80,10 @@ public class PeerToPeer
 			@Override
 			public void run() 
 			{
-
-				byte data[] = "xxxxxxxxxxxxxxx".getBytes();
+				readConfigFile();
+				System.out.println(ipList.toString());
 				DatagramSocket clientSocket = null;
-
+			
 				try 
 				{
 					clientSocket = new DatagramSocket();
@@ -99,15 +99,17 @@ public class PeerToPeer
 					for (int i = 0; i < ipList.size(); i++) 
 					{
 						InetAddress ipAddress;
-						//System.out.println(ipList.get(i) + "hello");
+
 						try 
 						{
 							ipAddress = InetAddress.getByName(ipList.get(i));
-
-
-							String hostIP =  "192.168.001.003";
+							byte data[] = Inet4Address.getLocalHost().getHostAddress().getBytes();
+							String hostIP =  Inet4Address.getLocalHost().getHostAddress();
+							
+							System.out.println(hostIP + "This is host");
+							
 							byte dataUp[] = hostIP.getBytes();
-							DatagramPacket sendPacket = new DatagramPacket(dataUp,data.length,ipAddress,9882); 
+							DatagramPacket sendPacket = new DatagramPacket( dataUp, data.length, ipAddress, 9882); 
 							clientSocket.send(sendPacket);
 
 							Thread.sleep(5000);//give time for receiver to boot 
@@ -125,7 +127,6 @@ public class PeerToPeer
 							System.out.println("InterruptedException");
 						}
 					}
-					//System.out.println("Client list exhausted.\n");
 				}
 			}
 		}).start();
@@ -138,8 +139,11 @@ public class PeerToPeer
 			@SuppressWarnings("resource")
 			@Override
 			public void run() 
-			{
+			{	
+				
 				DatagramSocket serverSocket = null;
+				
+				
 
 				try 
 				{
