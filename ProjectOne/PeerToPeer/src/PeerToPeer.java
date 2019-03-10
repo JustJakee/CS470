@@ -154,16 +154,20 @@ public class PeerToPeer
 				{
 					try 
 					{
-						System.out.println("Before receive");
 						serverSocket.receive(receivePacket);
-						System.out.println("After receive");
 						String msg = new String(receivePacket.getData(), receivePacket.getOffset() , receivePacket.getLength());
 						
-						System.out.println("received from " + msg);
 						
-						if(!ipList.contains(msg))
+						
+						if(!ipList.contains(msg) && !msg.equals("127.0.1.1"))
 						{
+							System.out.println(msg + " has joined the cluster" );
 							ipList.add(msg);
+							writeConfigFile();
+						}
+						else 
+						{
+							System.out.println( msg + " Network node has updated");
 						}
 
 					} 
