@@ -11,6 +11,7 @@ public class PeerToPeer
 
 	public static void main(String[] args) throws Exception 
 	{
+		//System.out.println(Inet4Address.getLocalHost().getHostAddress());
 		startReciever(); //Begin server thread
 		startSender(); //Begin client thread
 	}
@@ -104,7 +105,7 @@ public class PeerToPeer
 							System.out.println("This host " + hostIP + " sent to " + ipList.get(i).toString());
 							
 							byte dataUp[] = hostIP.getBytes();
-							DatagramPacket sendPacket = new DatagramPacket( dataUp, data.length, ipAddress, 9882); 
+							DatagramPacket sendPacket = new DatagramPacket( dataUp, dataUp.length, ipAddress, 9882); 
 							clientSocket.send(sendPacket);
 
 							Thread.sleep(5000);//give time for receiver to boot 
