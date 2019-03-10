@@ -12,7 +12,10 @@ public class PeerToPeer
 	public static void main(String[] args) throws Exception 
 	{
 		startReciever(); //Begin server thread
-		startSender(); //Begin client thread
+		if(!ipList.isEmpty())
+		{
+			startSender(); //Begin client thread
+		}
 	}
 
 
