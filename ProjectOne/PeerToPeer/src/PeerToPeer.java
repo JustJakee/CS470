@@ -29,7 +29,7 @@ public class PeerToPeer
 			{
 				if(!ipList.contains(i))
 				{
-					System.out.println("added " + i + " to the array list");
+					//System.out.println("added " + i + " to the array list");
 					ipList.add(i);
 				}
 			}   
@@ -101,7 +101,7 @@ public class PeerToPeer
 							byte data[] = Inet4Address.getLocalHost().getHostAddress().getBytes();
 							String hostIP =  Inet4Address.getLocalHost().getHostAddress();
 							
-							//System.out.println(hostIP + "This is host");
+							System.out.println("sent to " + ipList.get(i).toString());
 							
 							byte dataUp[] = hostIP.getBytes();
 							DatagramPacket sendPacket = new DatagramPacket( dataUp, data.length, ipAddress, 9882); 
@@ -122,7 +122,6 @@ public class PeerToPeer
 							System.out.println("InterruptedException");
 						}
 					}
-					System.out.println("sender " + ipList.toString());
 				}
 			}
 		}).start();
@@ -160,13 +159,12 @@ public class PeerToPeer
 						System.out.println("After receive");
 						String msg = new String(receivePacket.getData(), receivePacket.getOffset() , receivePacket.getLength());
 						
+						System.out.println("received from " + msg);
+						
 						if(!ipList.contains(msg))
 						{
-							System.out.println("addedyeet " + msg + " to the array listyeet");
 							ipList.add(msg);
 						}
-						
-						System.out.println("receiver " + ipList.toString());
 
 					} 
 					catch (IOException ex) 
