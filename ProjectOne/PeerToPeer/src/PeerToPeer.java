@@ -101,7 +101,7 @@ public class PeerToPeer
 							byte data[] = Inet4Address.getLocalHost().getHostAddress().getBytes();
 							String hostIP =  Inet4Address.getLocalHost().getHostAddress();
 							
-							//System.out.println("This host " + hostIP + "sent to " + ipList.get(i).toString());
+							System.out.println("This host " + hostIP + " sent to " + ipList.get(i).toString());
 							
 							byte dataUp[] = hostIP.getBytes();
 							DatagramPacket sendPacket = new DatagramPacket( dataUp, data.length, ipAddress, 9882); 
@@ -167,7 +167,7 @@ public class PeerToPeer
 						}
 						else 
 						{
-							//System.out.println( msg + " Network node has updated");
+							System.out.println( msg + " Network node has updated");
 						}
 
 					} 
