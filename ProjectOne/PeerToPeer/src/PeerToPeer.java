@@ -3,27 +3,28 @@ import java.net.*;
 import java.util.ArrayList;
 import java.io.*;
 
-public class PeerToPeer 
+public class PeerToPeer
 {
 	//public static ArrayList<String> ipList = new ArrayList<>(); //output
 	public static ArrayList<String> ipList = new ArrayList<String>();
 
 
-	public static void main(String[] args) throws Exception 
+	public static void main(String[] args) throws Exception
 	{
 		//System.out.println(Inet4Address.getLocalHost().getHostAddress());
-		startReciever(); //Begin server thread
 		startSender(); //Begin client thread
+		startReciever(); //Begin server thread
+
 	}
 
 
-	public static void readConfigFile() 
+	public static void readConfigFile()
 	{
 		try
 		{
 			FileReader fileReader = new FileReader("config.txt");
-			String i = null;    
-			
+			String i = null;
+
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 
 			while((i = bufferedReader.readLine()) != null)
@@ -33,22 +34,22 @@ public class PeerToPeer
 					//System.out.println("added " + i + " to the array list");
 					ipList.add(i);
 				}
-			}   
+			}
 
-			bufferedReader.close();         
+			bufferedReader.close();
 		}
-		catch(FileNotFoundException ex) 
+		catch(FileNotFoundException ex)
 		{
-			System.out.println("Unable to open file");                
+			System.out.println("Unable to open file");
 		}
-		catch(IOException ex) 
+		catch(IOException ex)
 		{
-			System.out.println("Error reading file");                  
+			System.out.println("Error reading file");
 		}
 	}
-	public static void writeConfigFile() 
+	public static void writeConfigFile()
 	{
-		try 
+		try
 		{
 			FileWriter fileWriter = new FileWriter("config.txt", false);
 
@@ -71,50 +72,52 @@ public class PeerToPeer
 
 	public static void startSender() throws UnknownHostException
 	{
-		(new Thread() 
+		(new Thread()
 		{
 			@SuppressWarnings("resource")
 			@Override
-			public void run() 
-			{	
+			public void run()
+			{
+				// System.out.println("started sender thread");
 				DatagramSocket clientSocket = null;
-				readConfigFile();
-				
-				try 
+
+
+				try
 				{
 					clientSocket = new DatagramSocket();
 					clientSocket.setBroadcast(true);
-				} 
-				catch (SocketException ex) 
+				}
+				catch (SocketException ex)
 				{
 					ex.printStackTrace();
 				}
 
 				while (true)
 				{
-					for (int i = 0; i < ipList.size(); i++) 
+					readConfigFile();
+					for (int i = 0; i < ipList.size(); i++)
 					{
 						InetAddress ipAddress;
 
-						try 
+						try
 						{
 							ipAddress = InetAddress.getByName(ipList.get(i));
 							byte data[] = Inet4Address.getLocalHost().getHostAddress().getBytes();
 							String hostIP =  Inet4Address.getLocalHost().getHostAddress();
-							
+
 							System.out.println("This host " + hostIP + " sent to " + ipList.get(i).toString());
-							
+
 							byte dataUp[] = hostIP.getBytes();
-							DatagramPacket sendPacket = new DatagramPacket( dataUp, dataUp.length, ipAddress, 9882); 
+							DatagramPacket sendPacket = new DatagramPacket( dataUp, dataUp.length, ipAddress, 9882);
 							clientSocket.send(sendPacket);
 
-							Thread.sleep(5000);//give time for receiver to boot 
-						} 
+							Thread.sleep(5000);//give time for receiver to boot
+						}
 						catch (UnknownHostException e) //unable to find IP
 						{
 							System.out.println("Unknown Host");
 						}
-						catch (IOException ex) 
+						catch (IOException ex)
 						{
 							System.out.println("IOException.");
 						}
@@ -128,50 +131,51 @@ public class PeerToPeer
 		}).start();
 	}
 
-	public static void startReciever() 
+	public static void startReciever()
 	{
-		(new Thread() 
+		(new Thread()
 		{
 			@SuppressWarnings("resource")
 			@Override
-			public void run() 
-			{	
-				readConfigFile();
+			public void run()
+			{
 				DatagramSocket serverSocket = null;
 
-				try 
+				try
 				{
 					serverSocket = new DatagramSocket(9882);
 
-				} 
-				catch (SocketException ex) 
+				}
+				catch (SocketException ex)
 				{
 					ex.printStackTrace();
 				}
 
 				DatagramPacket receivePacket = new DatagramPacket(new byte[1024], 1024);
 
-				while (true) 
+				while (true)
 				{
-					try 
+					readConfigFile();
+					try
 					{
 						serverSocket.receive(receivePacket);
 						String msg = new String(receivePacket.getData(), receivePacket.getOffset() , receivePacket.getLength());
-						
-						
+
+
 						if(!ipList.contains(msg) && !msg.equals("127.0.1.1"))
 						{
 							System.out.println(msg + " has joined the cluster" );
 							ipList.add(msg);
 							writeConfigFile();
+							System.out.println("wrote to config file");
 						}
-						else 
+						else
 						{
 							System.out.println( msg + " Network node has updated");
 						}
 
-					} 
-					catch (IOException ex) 
+					}
+					catch (IOException ex)
 					{
 						ex.printStackTrace();
 					}
