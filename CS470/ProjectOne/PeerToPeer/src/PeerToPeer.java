@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 import java.io.*;
+import java.util.Timer;
 
 public class PeerToPeer
 {
@@ -141,13 +142,7 @@ public class PeerToPeer
 				{
 					serverSocket = new DatagramSocket(9882);
 
-				}
-				catch (SocketException ex)
-				{
-					ex.printStackTrace();
-				}
-
-				DatagramPacket receivePacket = new DatagramPacket(new byte[1024], 1024);
+					DatagramPacket receivePacket = new DatagramPacket(new byte[1024], 1024);
 
 				while (true)
 				{
@@ -157,26 +152,31 @@ public class PeerToPeer
 						serverSocket.receive(receivePacket);
 						String msg = new String(receivePacket.getData(), receivePacket.getOffset() , receivePacket.getLength());
 
-
 						if(!ipList.contains(msg) && !msg.equals("127.0.1.1"))
 						{
 							System.out.println(msg + " has joined the cluster" );
 							ipList.add(msg);
 							writeConfigFile();
+							serverSocket.setSoTimeout(10000);
 						}
 						else
 						{
 							System.out.println( msg + " Network node has updated");
-							serverSocket.setSoTimeout(5001) throw new IOException(msg);
-							//throw new SocketTimeoutException(msg);
+							serverSocket.setSoTimeout(10000);
 						}
 
 					}
 					catch (IOException ex)
 					{
-						System.out.println(ex.getLocalizedMessage());
+						System.out.println(serverSocket.getInetAddress());
+						//serverSocket.close();
 					}
 				}
+			}
+			catch (SocketException e)
+			{
+				System.out.print("helleoooeoeoeooeoeoeeofhjfkldsjakfj.");
+			}
 			}
 		}).start();
 	}
