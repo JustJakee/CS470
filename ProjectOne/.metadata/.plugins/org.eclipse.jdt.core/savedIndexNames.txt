@@ -1,4 +1,0 @@
-INDEX VERSION 1.131+/Users/JBert28/Desktop/GitHub/CS470/ProjectOne/.metadata/.plugins/org.eclipse.jdt.core
-2635252837.index
-344405441.index
-2704003682.index
