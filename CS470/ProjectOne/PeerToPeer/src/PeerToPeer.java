@@ -12,11 +12,10 @@ public class PeerToPeer
 	{
 		startSender(); //Begin client thread
 		startReciever(); //Begin server thread
-
-
 	}
 
-
+	//Writes the ip addresses from the config.txt file and stores it in the
+	//ipList ArrayList
 	public static void readConfigFile()
 	{
 		try
@@ -45,12 +44,14 @@ public class PeerToPeer
 			System.out.println("Error reading file");
 		}
 	}
+
+	//Writes the ip addresses of the online machines stored in the ArrayList ipList to
+	//the config.txt file
 	public static void writeConfigFile()
 	{
 		try
 		{
 			FileWriter fileWriter = new FileWriter("config.txt");
-
 			BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
 			for( int i = 0; i < ipList.size(); i++)
@@ -67,7 +68,8 @@ public class PeerToPeer
 
 	}
 
-
+	//This method sends out the hostIP and the other IP's on the ipList
+	//to the cluster IPs
 	public static void startSender() throws UnknownHostException
 	{
 		(new Thread()
@@ -77,7 +79,6 @@ public class PeerToPeer
 			public void run()
 			{
 				DatagramSocket clientSocket = null;
-
 
 				try
 				{
@@ -100,11 +101,14 @@ public class PeerToPeer
 						{
 							ipAddress = InetAddress.getByName(ipList.get(i));
 
+							//sends the host IP
 							String hostIP =  Inet4Address.getLocalHost().getHostAddress();
 							byte hostData[] = hostIP.getBytes();
 							DatagramPacket sendHostPacket = new DatagramPacket( hostData, hostData.length, ipAddress, 9882);
 							clientSocket.send(sendHostPacket);
 
+
+							//sends every IP on the array list, except to the one that it is being sent to
 							for (int j = 0 ; j < ipList.size(); j++)
 							{
 								if ( !ipList.get(j).toString().equals(ipList.get(i).toString()))
@@ -115,7 +119,6 @@ public class PeerToPeer
 									clientSocket.send(sendPacket);
 								}
 							}
-
 
 							Thread.sleep(5000);//give time for receiver to boot
 						}
@@ -161,6 +164,7 @@ public class PeerToPeer
 					{
 						serverSocket.receive(receivePacket);
 						String msg = new String(receivePacket.getData(), receivePacket.getOffset() , receivePacket.getLength());
+						//Checks if IP recieved is on the config file, if not adds to the file
 						if(!ipList.contains(msg) && !msg.equals("127.0.1.1"))
 						{
 							System.out.println(msg + " has joined the cluster" );
@@ -168,21 +172,21 @@ public class PeerToPeer
 							writeConfigFile();
 							recentIP = msg;
 						}
+						//sends and update message, when ip is recieved
 						else
 						{
 							System.out.println( msg + " Network node has updated");
-							//writeConfigFile();
 							recentIP = msg;
 						}
 
 					}
 					catch (IOException ex)
 					{
-						//readConfigFile();
 						for (int i = 0; i < ipList.size(); i ++)
 						{
 							if ( ipList.get(i).toString().equals(recentIP))
 							{
+								//when timeout occurs the ip is removed from the cluster and the config file
 								System.out.println(ipList.get(i) + " Has been removed from the cluster");
 								ipList.remove(i);
 								writeConfigFile();
@@ -193,7 +197,7 @@ public class PeerToPeer
 			}
 			catch (SocketException e)
 			{
-				System.out.print(recentIP + "help");
+				System.out.print(recentIP);
 			}
 			}
 		}).start();
