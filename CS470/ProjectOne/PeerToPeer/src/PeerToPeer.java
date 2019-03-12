@@ -172,6 +172,7 @@ public class PeerToPeer
 						{
 							System.out.println( msg + " Network node has updated");
 							//serverSocket.setSoTimeout(10000);
+							writeConfigFile();
 							recentIP = msg;
 						}
 
