@@ -160,7 +160,7 @@ public class PeerToPeer
 					{
 						serverSocket.receive(receivePacket);
 						String msg = new String(receivePacket.getData(), receivePacket.getOffset() , receivePacket.getLength());
-						if(!ipList.contains(msg) && !msg.equals("127.0.1.1") && msg.equals(serverSocket.getInetAddress().toString()))
+						if(!ipList.contains(msg) && !msg.equals("127.0.1.1") && msg.equals(receivePacket.getAddress().getHostAddress()))
 						{
 							System.out.println(msg + " has joined the cluster" );
 							ipList.add(msg);
