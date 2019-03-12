@@ -98,15 +98,23 @@ public class PeerToPeer
 						try
 						{
 							ipAddress = InetAddress.getByName(ipList.get(i));
-							byte data[] = Inet4Address.getLocalHost().getHostAddress().getBytes();
+
 							String hostIP =  Inet4Address.getLocalHost().getHostAddress();
+							byte hostData[] = hostIP.getBytes();
+							DatagramPacket sendHostPacket = new DatagramPacket( hostData, hostData.length, ipAddress, 9882);
+							clientSocket.send(sendHostPacket);
 
-							System.out.println("This host " + hostIP + " sent to " + ipList.get(i).toString());
-						//	clientSocket.setSoTimeout(5000);
+							for (int j = 0 ; j < ipList.size(); j++)
+							{
+								if ( j != i )
+								{
+									System.out.println("This host " + hostIP + " sent to " + ipList.get(i).toString() + " The IP Adress of " + ipList.get(j).toString());
+									byte dataUp[] = ipList.get(j).getBytes();
+									DatagramPacket sendPacket = new DatagramPacket( dataUp, dataUp.length, ipAddress, 9882);
+									clientSocket.send(sendPacket);
+								}
+							}
 
-							byte dataUp[] = hostIP.getBytes();
-							DatagramPacket sendPacket = new DatagramPacket( dataUp, dataUp.length, ipAddress, 9882);
-							clientSocket.send(sendPacket);
 
 							Thread.sleep(5000);//give time for receiver to boot
 						}
