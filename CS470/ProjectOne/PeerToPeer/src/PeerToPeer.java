@@ -13,6 +13,7 @@ public class PeerToPeer
 		startSender(); //Begin client thread
 		startReciever(); //Begin server thread
 
+
 	}
 
 
@@ -160,18 +161,16 @@ public class PeerToPeer
 					{
 						serverSocket.receive(receivePacket);
 						String msg = new String(receivePacket.getData(), receivePacket.getOffset() , receivePacket.getLength());
-						if(!ipList.contains(msg) && !msg.equals("127.0.1.1") && msg.equals(receivePacket.getAddress().getHostAddress()))
+						if(!ipList.contains(msg) && !msg.equals("127.0.1.1"))
 						{
 							System.out.println(msg + " has joined the cluster" );
 							ipList.add(msg);
 							writeConfigFile();
-							//serverSocket.setSoTimeout(10000);
 							recentIP = msg;
 						}
 						else
 						{
 							System.out.println( msg + " Network node has updated");
-							//serverSocket.setSoTimeout(10000);
 							//writeConfigFile();
 							recentIP = msg;
 						}
