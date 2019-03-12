@@ -48,7 +48,7 @@ public class PeerToPeer
 	{
 		try
 		{
-			FileWriter fileWriter = new FileWriter("config.txt", false);
+			FileWriter fileWriter = new FileWriter("config.txt");
 
 			BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
@@ -106,9 +106,9 @@ public class PeerToPeer
 
 							for (int j = 0 ; j < ipList.size(); j++)
 							{
-								if ( j != i )
+								if ( !ipList.get(j).toString().equals(ipList.get(i).toString()))
 								{
-									System.out.println("This host " + hostIP + " sent to " + ipList.get(i).toString() + " The IP Adress of " + ipList.get(j).toString());
+									System.out.println("This host " + hostIP + " sent to " + ipList.get(i).toString() + " The IP Address of " + ipList.get(j).toString());
 									byte dataUp[] = ipList.get(j).getBytes();
 									DatagramPacket sendPacket = new DatagramPacket( dataUp, dataUp.length, ipAddress, 9882);
 									clientSocket.send(sendPacket);
@@ -145,10 +145,11 @@ public class PeerToPeer
 			public void run()
 			{
 				DatagramSocket serverSocket = null;
-
+				String recentIP = "error";
 				try
 				{
 					serverSocket = new DatagramSocket(9882);
+					serverSocket.setSoTimeout(10000);
 
 					DatagramPacket receivePacket = new DatagramPacket(new byte[1024], 1024);
 
@@ -159,31 +160,40 @@ public class PeerToPeer
 					{
 						serverSocket.receive(receivePacket);
 						String msg = new String(receivePacket.getData(), receivePacket.getOffset() , receivePacket.getLength());
-
-						if(!ipList.contains(msg) && !msg.equals("127.0.1.1"))
+						if(!ipList.contains(msg) && !msg.equals("127.0.1.1") && msg.equals(serverSocket.getInetAddress()))
 						{
 							System.out.println(msg + " has joined the cluster" );
 							ipList.add(msg);
 							writeConfigFile();
-							serverSocket.setSoTimeout(10000);
+							//serverSocket.setSoTimeout(10000);
+							recentIP = msg;
 						}
 						else
 						{
 							System.out.println( msg + " Network node has updated");
-							serverSocket.setSoTimeout(10000);
+							//serverSocket.setSoTimeout(10000);
+							recentIP = msg;
 						}
 
 					}
 					catch (IOException ex)
 					{
-						System.out.println(serverSocket.getInetAddress());
-						//serverSocket.close();
+						//readConfigFile();
+						for (int i = 0; i < ipList.size(); i ++)
+						{
+							if ( ipList.get(i).toString().equals(recentIP))
+							{
+								System.out.println(ipList.get(i) + " Has been removed from the cluster");
+								ipList.remove(i);
+								writeConfigFile();
+							}
+						}
 					}
 				}
 			}
 			catch (SocketException e)
 			{
-				System.out.print("helleoooeoeoeooeoeoeeofhjfkldsjakfj.");
+				System.out.print(recentIP + "help");
 			}
 			}
 		}).start();
