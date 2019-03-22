@@ -111,7 +111,7 @@ public class PeerToPeer
 							//sends every IP on the array list, except to the one that it is being sent to
 							for (int j = 0 ; j < ipList.size(); j++)
 							{
-								if ( !ipList.get(j).toString().equals(ipList.get(i).toString()))
+								if ( !ipList.get(j).toString().equals(ipList.get(i).toString()) || ipList.size() == 1)
 								{
 									System.out.println("This host " + hostIP + " sent to " + ipList.get(i).toString() + " The IP Address of " + ipList.get(j).toString());
 									byte dataUp[] = ipList.get(j).getBytes();
